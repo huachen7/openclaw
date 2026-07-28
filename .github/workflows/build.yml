@@ -20,8 +20,6 @@ jobs:
 
     - name: Setup pnpm
       uses: pnpm/action-setup@v4
-      with:
-        version: 11
 
     - name: Install dependencies
       run: |
@@ -33,11 +31,7 @@ jobs:
 
     - name: Package
       run: |
-        tar -czf openclaw-build.tar.gz \
-        dist \
-        node_modules \
-        package.json \
-        pnpm-lock.yaml
+        tar -czf openclaw-build.tar.gz .
 
     - name: Upload artifact
       uses: actions/upload-artifact@v4

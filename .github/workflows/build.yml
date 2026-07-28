@@ -10,31 +10,52 @@ jobs:
 
     steps:
 
+    # 拉取源码
     - name: Checkout
       uses: actions/checkout@v4
 
-    - name: Setup Node
+
+    # Node 22
+    - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
         node-version: 22
+        cache: pnpm
 
+
+    # 自动读取 package.json 的 packageManager
     - name: Setup pnpm
       uses: pnpm/action-setup@v4
 
+
+    # 安装依赖
     - name: Install dependencies
       run: |
-        pnpm install
+        pnpm install --frozen-lockfile
 
-    - name: Build
+
+    # 编译
+    - name: Build OpenClaw
+      env:
+        NODE_OPTIONS: "--max-old-space-size=6144"
       run: |
-        NODE_OPTIONS="--max-old-space-size=8192" pnpm build
+        pnpm build
 
-    - name: Package
+
+    # 打包
+    - name: Package build
       run: |
-        tar -czf openclaw-build.tar.gz .
+        tar \
+        --exclude=.git \
+        --exclude=.github \
+        --exclude=openclaw-build.tar.gz \
+        -czf openclaw-build.tar.gz .
 
+
+    # 上传编译结果
     - name: Upload artifact
       uses: actions/upload-artifact@v4
       with:
         name: openclaw-build
         path: openclaw-build.tar.gz
+        retention-days: 7

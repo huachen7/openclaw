@@ -22,12 +22,9 @@ jobs:
 
     - name: Setup pnpm
       uses: pnpm/action-setup@v4
-      with:
-        version: 11.15.1
-        run_install: false
 
 
-    - name: Verify environment
+    - name: Verify
       run: |
         node -v
         pnpm -v
@@ -47,7 +44,7 @@ jobs:
 
     - name: Package
       run: |
-        mkdir release
+        mkdir -p release
 
         cp -r dist release/ || true
         cp -r packages release/ || true
@@ -55,9 +52,7 @@ jobs:
         cp package.json release/
         cp pnpm-lock.yaml release/
 
-        tar \
-        --exclude=.git \
-        -czf openclaw-build.tar.gz release
+        tar -czf openclaw-build.tar.gz release
 
 
     - name: Upload artifact
